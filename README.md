@@ -1,1 +1,1 @@
-"# InfinitePixels" 
+# InfinitePixels
