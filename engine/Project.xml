@@ -6,20 +6,17 @@
 
 	<app title="engine" file="engine" main="Main" version="0.0.1" company="HaxeFlixel" />
 
-	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
-		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
-	<app preloader="flixel.system.FlxPreloader" />
-
-	<!--Minimum without FLX_NO_GAMEPAD: 11.8, without FLX_NO_NATIVE_CURSOR: 11.2-->
-	<set name="SWF_VERSION" value="11.8" />
 
 	<!-- ____________________________ Window Settings ___________________________ -->
 
 	<!--These window settings apply to all targets-->
 	<window width="640" height="480" fps="60" background="#000000" hardware="true" vsync="false" />
+<window background="null" if="html5" />
+
 
 	<!--HTML5-specific-->
-	<window if="html5" resizable="false" />
+<window if="html5" resizable="true" />
+
 
 	<!--Desktop-specific-->
 	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true" />
@@ -36,6 +33,8 @@
 	<!-- _______________________________ Libraries ______________________________ -->
 
 	<haxelib name="flixel" />
+<haxelib name="haxe-ui" />
+
 
 	<!--In case you want to use the addons package-->
 	<!--<haxelib name="flixel-addons" />-->

@@ -13,10 +13,16 @@ class Main extends Sprite
 		super();
 
 		var search:String = Browser.window.location.search;
-		trace(search);
-		var searchParams:URLSearchParams = new URLSearchParams(search);
-		trace(searchParams.get("test"));
 
-		addChild(new FlxGame(0, 0, PlayState));
+		var searchParams:URLSearchParams = new URLSearchParams(search);
+		var graphicKey:String = [for (i in 0...128) 0].join("");
+		if (searchParams.has("key"))
+			graphicKey = searchParams.get("key");
+
+		Globals.parseGraphicData(graphicKey);
+
+		
+
+		// addChild(new FlxGame(0, 0, PlayState));
 	}
 }
