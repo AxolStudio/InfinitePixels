@@ -1,12 +1,9 @@
 package;
 
 import openfl.display.BitmapData;
-import flixel.util.FlxColor;
-import haxe.io.BytesData;
 import haxe.io.Bytes;
-import openfl.utils.ByteArray;
 
-typedef Palette = Array<FlxColor>;
+typedef Palette = Array<Int>;
 
 class Globals
 {
@@ -42,9 +39,6 @@ class Globals
 		{
 			GraphicData[i] = tempData[0][i] + (tempData[1][i] * 2);
 		}
-
-		trace(GraphicData);
-	
 	}
 
 	public static function buildImage():BitmapData
@@ -61,4 +55,18 @@ class Globals
 
 		return image;
 	}
+
+    public static function setPalette(Input:String):Void
+    {
+        var inputArr:Array<String> = Input.split(",");
+        if (inputArr.length == 4)
+        {
+            var tempPalette:Palette = [for (i in 0...4) 0];
+            for (i in 0...4)
+            {
+                tempPalette[i] = Std.parseInt("0x"+inputArr[i]);
+            }
+            palette = tempPalette;
+        }
+    }
 }
