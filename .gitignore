@@ -7,3 +7,5 @@ dump/decoding_error.txt
 data_output
 haxe_libraries
 dump
+node_modules
+public
