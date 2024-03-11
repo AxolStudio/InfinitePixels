@@ -1,0 +1,74 @@
+
+<script type="text/javascript">
+    lime.embed ("InfiniteEngine", "engine-content", 640, 480, { parameters: {} });
+</script>
+
+
+<script type="text/javascript">
+    
+    // get key from search params
+    var urlParams = new URLSearchParams(window.location.search);
+    var key = urlParams.get('key');
+    if (key == null)
+    {
+        key = "0";
+    }
+    else
+    {
+        key = key.replace(/[^a-f0-9]/gi, '');
+    }
+
+    
+    function getRandom()
+    {
+     // make a random 128-digit hex number
+        var r = "";
+        for (var i = 0; i < 128; i++)
+        {
+            r += Math.floor(Math.random() * 16).toString(16);
+        }
+        return r;   
+    }
+
+
+    var keys = [];
+    keys.push((BigInt('0x'+key) - 1000000n).toString(16));
+    keys.push((BigInt('0x'+key) - 100000n).toString(16));
+    keys.push((BigInt('0x'+key) - 10000n).toString(16));
+    keys.push((BigInt('0x'+key) - 1000n).toString(16));
+    keys.push((BigInt('0x'+key) - 100n).toString(16));
+    keys.push((BigInt('0x'+key) - 10n).toString(16));
+    keys.push((BigInt('0x'+key) - 1n).toString(16));
+    keys.push(getRandom());
+    keys.push((BigInt('0x'+key) + 1n).toString(16));
+    keys.push((BigInt('0x'+key) + 10n).toString(16));
+    keys.push((BigInt('0x'+key) + 100n).toString(16));
+    keys.push((BigInt('0x'+key) + 1000n).toString(16));
+    keys.push((BigInt('0x'+key) + 10000n).toString(16));
+    keys.push((BigInt('0x'+key) + 100000n).toString(16));
+    keys.push((BigInt('0x'+key) + 1000000n).toString(16));
+
+    
+console.log(keys);
+
+document.getElementById("min1mil").setAttribute("href", "/?key=" + keys[0]);
+document.getElementById("min100k").setAttribute("href", "/?key=" + keys[1]);
+document.getElementById("min10k").setAttribute("href", "/?key=" + keys[2]);
+document.getElementById("min1k").setAttribute("href", "/?key=" + keys[3]);
+document.getElementById("min100").setAttribute("href", "/?key=" + keys[4]);
+document.getElementById("min10").setAttribute("href", "/?key=" + keys[5]);
+document.getElementById("min1").setAttribute("href", "/?key=" + keys[6]);
+document.getElementById("minRand").setAttribute("href", "/?key=" + keys[7]);
+document.getElementById("add1").setAttribute("href", "/?key=" + keys[8]);
+document.getElementById("add10").setAttribute("href", "/?key=" + keys[9]);
+document.getElementById("add100").setAttribute("href", "/?key=" + keys[10]);
+document.getElementById("add1k").setAttribute("href", "/?key=" + keys[11]);
+document.getElementById("add10k").setAttribute("href", "/?key=" + keys[12]);
+document.getElementById("add100k").setAttribute("href", "/?key=" + keys[13]);
+document.getElementById("add1mil").setAttribute("href", "/?key=" + keys[14]);
+
+
+    
+
+
+</script>

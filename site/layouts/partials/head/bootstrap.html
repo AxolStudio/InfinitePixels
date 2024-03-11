@@ -1,0 +1,12 @@
+
+{{ if hugo.IsProduction }}
+{{ $bootstrap := resources.Get "js/bootstrap.bundle.min.js" }}
+
+<script src="{{ $bootstrap.RelPermalink }}" crossorigin="anonymous"></script>
+
+{{ else }}
+{{ $bootstrap := resources.Get "js/bootstrap.bundle.js" }}
+
+<script src="{{ $bootstrap.RelPermalink }}" ></script>
+
+{{ end}}
