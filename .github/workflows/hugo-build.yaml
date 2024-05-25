@@ -53,9 +53,9 @@ jobs:
                   sudo apt-get install haxe -y
                   mkdir ~/haxelib && haxelib setup ~/haxelib
             -   name: Install OpenFL
-                run: |
-                  haxelib install openfl
-                  haxelib run openfl setup
+                run: haxelib install openfl
+            -   name: Setup OpenFL
+                run: haxelib run openfl setup
             -   name: build project
                 run: lime build html5 -clean
                 working-directory: infinite-engine
