@@ -56,8 +56,10 @@ jobs:
                 run: haxelib install openfl --quiet
             -   name: Install Lime
                 run: haxelib install lime --quiet
+            -   name: Setup Lime
+                run: haxelib run lime setup
             -   name: build project
-                run: lime build html5 -clean
+                run: lime build html5 -clean -final
                 working-directory: infinite-engine
             -   name: Setup Pages
                 id: pages
