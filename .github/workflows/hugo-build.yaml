@@ -44,6 +44,8 @@ jobs:
                 with: 
                     submodules: recursive
                     fetch-depth: 0
+            -   name: Pull
+                run: git pull
             -   name: Setup Pages
                 id: pages
                 uses: actions/configure-pages@v3
@@ -54,13 +56,12 @@ jobs:
             -   name: Install dependencies
                 run: npm ci
                 working-directory: site
-            -   name: Pull
-                run: git pull
             -   name: Build
                 env:
                     HUGO_ENVIRONMENT: production
                     HUGO_ENV: production
                 run: |
+                    ls -lA
                     cd site
                     hugo \
                     --gc \
