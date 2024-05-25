@@ -46,6 +46,17 @@ jobs:
                     fetch-depth: 0
             -   name: Pull
                 run: git pull
+            -   name: Get Haxe
+                run: |
+                  sudo add-apt-repository ppa:haxe/releases -y
+                  sudo apt-get update
+                  sudo apt-get install haxe -y
+                  mkdir ~/haxelib && haxelib setup ~/haxelib
+            -   name: build project
+                run: lime build html5 -clean
+                working-directory: infinite-engine
+            -   name: Install OpenFL
+                run: haxelib install openfl
             -   name: Setup Pages
                 id: pages
                 uses: actions/configure-pages@v3
@@ -61,12 +72,11 @@ jobs:
                     HUGO_ENVIRONMENT: production
                     HUGO_ENV: production
                 run: |
-                    ls -lA
-                    cd site
                     hugo \
                     --gc \
                     --minify \
                     --baseURL "${{ steps.pages.outputs.base_url }}/"
+                working-directory: site
             -   name: Upload Artifact
                 uses: actions/upload-pages-artifact@v2
                 with: 
