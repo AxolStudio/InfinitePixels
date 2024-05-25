@@ -6,12 +6,28 @@
   {{ partial "head.html" . }}
 </head>
 
-<body class="">
+<body class="d-flex h-100 text-center text-bg-dark">
 
-  <main class="container">{{ block "main" . }}{{ end }}</main>
+
+  <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <header class="mb-auto">
+      <div>
+        {{ block "header" . }}{{ end }}
+      </div>
+    </header>
+  
+    <main class="px-3">
+      {{ block "main" . }}{{ end }}
+    </main>
+  
+    <footer class="mt-auto text-white-50">
+      {{ block "footer" . }}{{ end }} 
+    </footer>
+  </div>
+
 
   {{ partial "scripts.html" . }}
-  
+
 </body>
 
 </html>

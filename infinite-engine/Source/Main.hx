@@ -57,7 +57,7 @@ class Main extends Sprite {
 		addChild(zoom5xSprite);
 		addChild(zoom1xSprite);
 
-		var scaledSize:Int = Std.int(16 * 25 + 4);
+		var scaledSize:Int = Std.int((16 * 25) + 4);
 		var lines:BitmapData = new BitmapData(scaledSize, scaledSize, true, 0x00000000);
 		var lineColor:Int = 0xff7f7f7f;
 
