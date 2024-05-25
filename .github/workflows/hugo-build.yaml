@@ -52,11 +52,13 @@ jobs:
                   sudo apt-get update
                   sudo apt-get install haxe -y
                   mkdir ~/haxelib && haxelib setup ~/haxelib
+            -   name: Install OpenFL
+                run: |
+                  haxelib install openfl
+                  haxelib run openfl setup
             -   name: build project
                 run: lime build html5 -clean
                 working-directory: infinite-engine
-            -   name: Install OpenFL
-                run: haxelib install openfl
             -   name: Setup Pages
                 id: pages
                 uses: actions/configure-pages@v3
