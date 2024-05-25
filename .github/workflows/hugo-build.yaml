@@ -1,18 +1,20 @@
 name: ⚙ Build the Hugo Site
 
 on: 
-    workflow_call:
-        outputs: 
-            base_url: 
-                description: "The Base URL of the site"
-                value: ${{ jobs.build.outputs.base_url }}
-    push:
-        branches:
-            - main
-        tags-ignore:
-            - generated.**
-        paths-ignore:
-            - '.github/**'
+  workflow_dispatch:
+  
+  workflow_call:
+      outputs: 
+          base_url: 
+              description: "The Base URL of the site"
+              value: ${{ jobs.build.outputs.base_url }}
+  push:
+      branches:
+          - main
+      tags-ignore:
+          - generated.**
+    paths-ignore:
+          - '.github/**'
             
     
 permissions: write-all    
