@@ -50,14 +50,14 @@ jobs:
                 run: |
                   sudo add-apt-repository ppa:haxe/releases -y
                   sudo apt-get update
-                  sudo apt-get install haxe -y
+                  sudo apt-get install haxe -y --quiet
                   mkdir ~/haxelib && haxelib setup ~/haxelib
             -   name: Install OpenFL
                 run: haxelib install openfl --quiet
             -   name: Install Lime
                 run: haxelib install lime --quiet
             -   name: Setup Lime
-                run: haxelib run lime setup
+                run: haxelib run lime setup -y
             -   name: build project
                 run: lime build html5 -clean -final
                 working-directory: infinite-engine
