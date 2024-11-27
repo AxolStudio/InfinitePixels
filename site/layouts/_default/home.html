@@ -1,5 +1,5 @@
 {{ define "header" }}
-<h1 class="masthead-brand display-1">Infinite Pixels</h1>
+<h1 class="masthead-brand display-2">Infinite Pixels</h1>
 <p class="lead">Every possible 16x16 pixel 4-bit sprite that can possibly exist</p>
 {{ end }}
 
@@ -10,7 +10,7 @@
 
 {{ define "footer" }}
 <div class="d-flex flex-column justify-content-evenly " style="height: 200px;">
-    <a href="" id="btnRand" class="btn btn-primary btn-sm">Random</a>
+{{/* show the current id of this sprite */}}
 
     <div class="d-flex">
         <button id="btnMinus" class="btn btn-primary btn-sm px-4">-</button>
@@ -33,6 +33,7 @@
         <button class="btn btn-dark btn-seondary btn-sm" id="btnV1e10" onclick="setValue(10000000000);">1e10</button>
 
     </div>
+<a href="" id="btnRand" class="btn btn-primary btn-sm">Random</a>
 </div>
 
 
