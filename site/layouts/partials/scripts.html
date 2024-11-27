@@ -1,74 +1,139 @@
-
 <script type="text/javascript">
-    lime.embed ("InfiniteEngine", "engine-content", 548, 448, { parameters: {} });
+                                                lime.embed("InfiniteEngine", "engine-content", 548, 448, { parameters: {} });
 </script>
 
 
 <script type="text/javascript">
-    
+
+            function lzw64_encode(s) {
+                if (!s) return s;
+                var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+                var d = new Map();
+                var s = unescape(encodeURIComponent(s)).split("");
+                var word = s[0];
+                var num = 256;
+                var key;
+                var o = [];
+                function out(word, num) {
+                    key = word.length > 1 ? d.get(word) : word.charCodeAt(0);
+                    o.push(b64[key & 0x3f]);
+                    o.push(b64[(key >> 6) & 0x3f]);
+                    o.push(b64[(key >> 12) & 0x3f]);
+                }
+                for (var i = 1; i < s.length; i++) {
+                    var c = s[i];
+                    if (d.has(word + c)) {
+                        word += c;
+                    } else {
+                        d.set(word + c, num++);
+                        out(word, num);
+                        word = c;
+                        if (num == (1 << 18) - 1) {
+                            d.clear();
+                            num = 256;
+                        }
+                    }
+                }
+                out(word);
+                return o.join("");
+            }
+
+            function lzw64_decode(s) {
+                var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+                var b64d = {};
+                for (var i = 0; i < 64; i++) {
+                    b64d[b64.charAt(i)] = i;
+                }
+                var d = new Map();
+                var num = 256;
+                var word = String.fromCharCode(b64d[s[0]] + (b64d[s[1]] << 6) + (b64d[s[2]] << 12));
+                var prev = word;
+                var o = [word];
+                for (var i = 3; i < s.length; i += 3) {
+                    var key = b64d[s[i]] + (b64d[s[i + 1]] << 6) + (b64d[s[i + 2]] << 12);
+                    word = key < 256 ? String.fromCharCode(key) : d.has(key) ? d.get(key) : word + word.charAt(0);
+                    o.push(word);
+                    d.set(num++, prev + word.charAt(0));
+                    prev = word;
+                    if (num == (1 << 18) - 1) {
+                        d.clear();
+                        num = 256;
+                    }
+                }
+                return decodeURIComponent(escape(o.join("")));
+            }
+        
+
     // get key from search params
     var urlParams = new URLSearchParams(window.location.search);
     var key = urlParams.get('key');
-    if (key == null)
-    {
-        key = "0";
+                                                var minKey = '';
+                                                var maxKey = '';
+                                                for (var i = 0; i < 128; i++) {
+                                                    minKey += "0";
+                                                    maxKey += "f";
     }
-    else
-    {
+                                                if (key == null) {
+                                                    key = minKey;
+                                                }
+                                                else {
         key = key.replace(/[^a-f0-9]/gi, '');
+
+                                                key = key.padStart(128, '0');
     }
 
-    
-    function getRandom()
-    {
-     // make a random 128-digit hex number
+
+                                                function getRandom() {
+                                                // make a random 128-digit hex number
         var r = "";
-        for (var i = 0; i < 128; i++)
-        {
+                                                for (var i = 0; i < 128; i++) {
             r += Math.floor(Math.random() * 16).toString(16);
         }
-        return r;   
+                                                return r;
     }
 
+                                    console.log(key);
+                                    console.log(BigInt('0x' + key).toString(16));
+                                    console.log(BigInt('0x' + key).toString(36));
 
-    var keys = [];
-    keys.push((BigInt('0x'+key) - 1000000n).toString(16));
-    keys.push((BigInt('0x'+key) - 100000n).toString(16));
-    keys.push((BigInt('0x'+key) - 10000n).toString(16));
-    keys.push((BigInt('0x'+key) - 1000n).toString(16));
-    keys.push((BigInt('0x'+key) - 100n).toString(16));
-    keys.push((BigInt('0x'+key) - 10n).toString(16));
-    keys.push((BigInt('0x'+key) - 1n).toString(16));
-    keys.push(getRandom());
-    keys.push((BigInt('0x'+key) + 1n).toString(16));
-    keys.push((BigInt('0x'+key) + 10n).toString(16));
-    keys.push((BigInt('0x'+key) + 100n).toString(16));
-    keys.push((BigInt('0x'+key) + 1000n).toString(16));
-    keys.push((BigInt('0x'+key) + 10000n).toString(16));
-    keys.push((BigInt('0x'+key) + 100000n).toString(16));
-    keys.push((BigInt('0x'+key) + 1000000n).toString(16));
+                                    console.log(lzw64_encode(BigInt('0x' + key).toString(36)));
 
-    
-console.log(keys);
+                                    function setValue(Value) {
+                                        document.getElementById("numAdjust").value = Value;
+                                    }
 
-document.getElementById("min1mil").setAttribute("href", "?key=" + keys[0]);
-document.getElementById("min100k").setAttribute("href", "?key=" + keys[1]);
-document.getElementById("min10k").setAttribute("href", "?key=" + keys[2]);
-document.getElementById("min1k").setAttribute("href", "?key=" + keys[3]);
-document.getElementById("min100").setAttribute("href", "?key=" + keys[4]);
-document.getElementById("min10").setAttribute("href", "?key=" + keys[5]);
-document.getElementById("min1").setAttribute("href", "?key=" + keys[6]);
-document.getElementById("minRand").setAttribute("href", "?key=" + keys[7]);
-document.getElementById("add1").setAttribute("href", "?key=" + keys[8]);
-document.getElementById("add10").setAttribute("href", "?key=" + keys[9]);
-document.getElementById("add100").setAttribute("href","?key=" + keys[10]);
-document.getElementById("add1k").setAttribute("href", "?key=" + keys[11]);
-document.getElementById("add10k").setAttribute("href", "?key=" + keys[12]);
-document.getElementById("add100k").setAttribute("href", "?key=" + keys[13]);
-document.getElementById("add1mil").setAttribute("href", "?key=" + keys[14]);
+                                
 
 
-    
+                                                document.getElementById("btnRand").setAttribute("href", "?key=" + getRandom());
+                                                document.getElementById("btnMinus").onclick = function () {
+
+                                                                                                var numAdjust = parseInt(document.getElementById("numAdjust").value);
+                                                                                                var numKey = BigInt("0x" + key);
+                                                                                                numKey -= BigInt(numAdjust);
+                                                                                                if (numKey < BigInt("0x" + minKey)) {
+                                                                                                    numKey += maxKey;
+                                                                                                }
+                                                                                                key = numKey.toString(16);
+                                                                                                console.log(key);
+                                                                                                window.location.href = "?key=" + key.padStart(128, '0');
+                                                                                            }
+                                                                                            document.getElementById("btnPlus").onclick = function () {
+
+                                                                                        var numAdjust = parseInt(document.getElementById("numAdjust").value);
+                                                                                        var numKey = BigInt("0x" + key);
+                                                                                        numKey += BigInt(numAdjust);
+                                                                                        if (numKey > BigInt("0x" + maxKey)) {
+                                                                                            numKey -= maxKey;
+                                                                                        }
+                                                                                        key = numKey.toString(16);
+                                                                                        console.log(key);
+                                                                                        window.location.href = "?key=" + key.padStart(128, '0');
+                                                                                    }
+
+
+
+
 
 
 </script>

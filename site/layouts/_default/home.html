@@ -5,27 +5,35 @@
 
 {{ define "main" }}
 
-<div id="engine-content" class="ratio " style="--bs-aspect-ratio: 80%;" ></div>
+<div id="engine-content" class="ratio " style="--bs-aspect-ratio: 80%;"></div>
 {{ end }}
 
 {{ define "footer" }}
-<p>
-<a href="" id="min1mil">-1,000,000</a>
-<a href="" id="min100k">-100,000</a>
-<a href="" id="min10k" >-10,000</a>
-<a href="" id="min1k">-1,000</a>
-<a href="" id="min100">-100</a>
-<a href="" id="min10">-10</a>
-<a href="" id="min1">-1</a>
-<a href="" id="minRand">Random</a>
-<a href="" id="add1" >+1</a>  
-<a href="" id="add10">+10</a>
-<a href="" id="add100">+100</a>
-<a href="" id="add1k">+1,000</a>
-<a href="" id="add10k">+10,000</a>
-<a href="" id="add100k">+100,000</a>
-<a href="" id="add1mil">+1,000,000</a>
-</p>
+<div class="d-flex flex-column justify-content-evenly " style="height: 200px;">
+    <a href="" id="btnRand" class="btn btn-primary btn-sm">Random</a>
+
+    <div class="d-flex">
+        <button id="btnMinus" class="btn btn-primary btn-sm px-4">-</button>
+        <div class="input-group mx-4">
+            <span class="input-group-text" id="adjust-label">Navigate by</span>
+            <input type="text" id="numAdjust" class="form-control" value="1" aria-describedby="adjust-label">
+        </div>
+        <button id="btnPlus" class="btn btn-primary btn-sm px-4">+</button>
+    </div>
+    <div class="d-flex justify-content-evenly ">
+        <button class="btn btn-dark btn-seondary btn-sm" id="btnV1e1" onclick="setValue(10);">1e1</button>
+        <button class="btn btn-dark btn-seondary btn-sm" id="btnV1e2" onclick="setValue(100);">1e2</button>
+        <button class="btn btn-dark btn-seondary btn-sm" id="btnV1e3" onclick="setValue(1000);">1e3</button>
+        <button class="btn btn-dark btn-seondary btn-sm" id="btnV1e4" onclick="setValue(10000);">1e4</button>
+        <button class="btn btn-dark btn-seondary btn-sm" id="btnV1e5" onclick="setValue(100000);">1e5</button>
+        <button class="btn btn-dark btn-seondary btn-sm" id="btnV1e6" onclick="setValue(1000000);">1e6</button>
+        <button class="btn btn-dark btn-seondary btn-sm" id="btnV1e7" onclick="setValue(10000000);">1e7</button>
+        <button class="btn btn-dark btn-seondary btn-sm" id="btnV1e8" onclick="setValue(100000000);">1e8</button>
+        <button class="btn btn-dark btn-seondary btn-sm" id="btnV1e9" onclick="setValue(1000000000);">1e9</button>
+        <button class="btn btn-dark btn-seondary btn-sm" id="btnV1e10" onclick="setValue(10000000000);">1e10</button>
+
+    </div>
+</div>
 
 
 {{ end }}
