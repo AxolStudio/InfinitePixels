@@ -36,8 +36,5 @@ ignoreErrors = ["error-disable-taxonomy", "error-no-layout"]
     source = "node_modules/bootstrap/dist/js/bootstrap.bundle.js"
     target = "assets/js/bootstrap.bundle.js"
   [[module.mounts]]
-    source = "node_modules/bootstrap-icons/font/fonts"
-    target = "static/css/fonts"
-  [[module.mounts]]
     source = "../infinite-engine/Export/html5/bin/InfiniteEngine.js"
     target = "assets/js/InfiniteEngine.js"

@@ -1,12 +1,16 @@
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Work+Sans:ital@0;1&display=swap');
     </style>
-    
+
     {{- $options := dict 
         "targetPath" "css/styles.css"
         "outputStyle" "compressed"
         "enableSourceMap" (not hugo.IsProduction)
     -}}
-    {{- with resources.Get "/scss/main.scss" | toCSS  $options | minify -}}
-    <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" media="screen" crossorigin="anonymous" />
-    {{- end -}}  
+{{- $cssMain := resources.Get "scss/abstract/core.scss" | resources.ExecuteAsTemplate "scss/core.scss" . -}}
+{{- $cssStyles := resources.Get "scss/abstract/styles.scss" | resources.ExecuteAsTemplate "scss/styles.scss" . -}}
+
+{{- $styles := slice $cssMain $cssStyles | resources.Concat "scss/main.scss" | toCSS $options | minify | fingerprint -}}
+
+<link rel="stylesheet" href="{{ $styles.RelPermalink }}" integrity="{{ $styles.Data.Integrity }}" media="screen"
+    crossorigin="anonymous">

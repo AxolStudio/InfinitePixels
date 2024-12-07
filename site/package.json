@@ -4,13 +4,16 @@
   "description": "website portion of infinite pixels",
   "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run scss",
+    "watch:css": "sass --watch assets/scss:.",
+    "watch": "npm run watch:css",
+    "script": "npm run build && npm run watch",
+    "run": "hugo server -D"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bignumber.js": "^9.1.2",
-    "bootstrap": "^5.3.3",
-    "bootstrap-icons": "^1.11.3"
+    "bootstrap": "^5.3.3"
   }
 }

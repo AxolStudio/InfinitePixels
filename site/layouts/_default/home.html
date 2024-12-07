@@ -10,7 +10,13 @@
 
 {{ define "footer" }}
 <div class="d-flex flex-column justify-content-evenly " style="height: 200px;">
-{{/* show the current id of this sprite */}}
+    <div class="input-group ">
+        <span class="input-group-text" id="sprite-id-label">
+            <i class="fa-regular fa-map-location input-group-text fa-lg" style="border:none;"></i>
+        </span>
+    
+        <input type="text" id="sprite-id" class="form-control key-font " value="" aria-describedby="sprite-id-label">
+    </div>
 
     <div class="d-flex">
         <button id="btnMinus" class="btn btn-primary btn-sm px-4">-</button>
@@ -33,7 +39,7 @@
         <button class="btn btn-dark btn-seondary btn-sm" id="btnV1e10" onclick="setValue(10000000000);">1e10</button>
 
     </div>
-<a href="" id="btnRand" class="btn btn-primary btn-sm">Random</a>
+    <a href="" id="btnRand" class="btn btn-primary btn-sm">Random</a>
 </div>
 
 
