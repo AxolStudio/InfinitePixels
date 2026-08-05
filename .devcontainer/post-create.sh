@@ -9,7 +9,7 @@ log() {
 }
 
 ensure_apt_prerequisites() {
-  if command -v add-apt-repository >/dev/null 2>&1 && command -v wget >/dev/null 2>&1 && command -v java >/dev/null 2>&1 && dpkg -s ca-certificates >/dev/null 2>&1; then
+  if command -v add-apt-repository >/dev/null 2>&1 && command -v wget >/dev/null 2>&1 && command -v java >/dev/null 2>&1 && command -v git-lfs >/dev/null 2>&1 && dpkg -s ca-certificates >/dev/null 2>&1; then
     log "Apt prerequisites already present."
     return
   fi
@@ -23,7 +23,7 @@ ensure_apt_prerequisites() {
 
   trap 'if [[ -n "${disabled_yarn_repo}" && -f "${disabled_yarn_repo}" ]]; then sudo mv "${disabled_yarn_repo}" /etc/apt/sources.list.d/yarn.list; fi' EXIT
   sudo apt-get update
-  sudo apt-get install -y software-properties-common wget ca-certificates default-jre-headless
+  sudo apt-get install -y software-properties-common wget ca-certificates default-jre-headless git-lfs
 
   if [[ -n "${disabled_yarn_repo}" && -f "${disabled_yarn_repo}" ]]; then
     sudo mv "${disabled_yarn_repo}" /etc/apt/sources.list.d/yarn.list
@@ -126,6 +126,10 @@ install_site_dependencies() {
 
 main() {
   ensure_apt_prerequisites
+
+  if command -v git-lfs >/dev/null 2>&1; then
+    git lfs install --skip-repo >/dev/null 2>&1 || true
+  fi
 
   ensure_hugo_extended
   ensure_haxe
