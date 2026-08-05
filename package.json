@@ -1,0 +1,13 @@
+{
+  "name": "infinite-pixels-workspace",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Workspace scripts for building Infinite Pixels projects",
+  "scripts": {
+    "setup": "bash .devcontainer/post-create.sh",
+    "build": "npm run build:haxe && npm run build:site",
+    "build:haxe": "cd infinite-engine && haxelib run lime build html5 -clean -final",
+    "build:site": "npm --prefix site run build",
+    "serve": "npm --prefix site run serve"
+  }
+}

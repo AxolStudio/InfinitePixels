@@ -1,5 +1,7 @@
 package;
 
+import haxe.crypto.Base64;
+import haxe.io.Bytes;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import js.Browser;
@@ -7,6 +9,105 @@ import js.html.URLSearchParams;
 import openfl.display.Sprite;
 
 class Main extends Sprite {
+	static inline var KEY_HEX_LENGTH:Int = 128;
+	static inline var KEY_BYTE_LENGTH:Int = 64;
+	static inline var BASE85_ALPHABET:String = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#$%&()*+-;<=>?@^_`{|}~";
+
+	static function sanitizeHexKey(raw:String):String {
+		var cleaned = ~/[^a-fA-F0-9]/g.replace(raw, "").toLowerCase();
+		if (cleaned.length > KEY_HEX_LENGTH) {
+			cleaned = cleaned.substr(cleaned.length - KEY_HEX_LENGTH);
+		}
+		while (cleaned.length < KEY_HEX_LENGTH) {
+			cleaned = "0" + cleaned;
+		}
+		return cleaned;
+	}
+
+	static function bytesToHex(bytes:Bytes):String {
+		var out = new StringBuf();
+		for (i in 0...bytes.length) {
+			out.add(StringTools.hex(bytes.get(i), 2).toLowerCase());
+		}
+		return out.toString();
+	}
+
+	static function decodeBase85(compact:String):Null<Bytes> {
+		if (compact == null || compact.length == 0 || compact.length % 5 != 0) {
+			return null;
+		}
+
+		var decoded = Bytes.alloc(Std.int((compact.length / 5) * 4));
+		var outPos = 0;
+
+		for (i in 0...Std.int(compact.length / 5)) {
+			var value:Float = 0;
+			for (j in 0...5) {
+				var ch = compact.charAt((i * 5) + j);
+				var idx = BASE85_ALPHABET.indexOf(ch);
+				if (idx < 0) {
+					return null;
+				}
+				value = (value * 85) + idx;
+			}
+
+			if (value < 0 || value > 4294967295.0) {
+				return null;
+			}
+
+			var b0 = Std.int(Math.floor(value / 16777216.0));
+			var rem1 = value - (b0 * 16777216.0);
+			var b1 = Std.int(Math.floor(rem1 / 65536.0));
+			var rem2 = rem1 - (b1 * 65536.0);
+			var b2 = Std.int(Math.floor(rem2 / 256.0));
+			var b3 = Std.int(rem2 - (b2 * 256.0));
+
+			decoded.set(outPos++, b0);
+			decoded.set(outPos++, b1);
+			decoded.set(outPos++, b2);
+			decoded.set(outPos++, b3);
+		}
+
+		return decoded;
+	}
+
+	static function decodeBase64Url(compact:String):Null<Bytes> {
+		if (compact == null || compact.length == 0) {
+			return null;
+		}
+
+		if (compact == null || compact.length == 0) {
+			return null;
+		}
+
+		var normalized = compact.split("-").join("+").split("_").join("/");
+		while (normalized.length % 4 != 0) {
+			normalized += "=";
+		}
+
+		try {
+			return Base64.decode(normalized);
+		} catch (_:Dynamic) {
+			return null;
+		}
+	}
+
+	static function decodeCompactKey(compact:String):Null<String> {
+		if (compact == null || compact.length == 0) {
+			return null;
+		}
+
+		var decoded = decodeBase85(compact);
+		if (decoded == null || decoded.length != KEY_BYTE_LENGTH) {
+			decoded = decodeBase64Url(compact);
+		}
+		if (decoded == null || decoded.length != KEY_BYTE_LENGTH) {
+			return null;
+		}
+
+		return bytesToHex(decoded);
+	}
+
 	public var zoom1xSprite:Bitmap;
 	public var zoom5xSprite:Bitmap;
 	public var zoom25xSprite:Bitmap;
@@ -20,9 +121,15 @@ class Main extends Sprite {
 		var search:String = Browser.window.location.search;
 
 		var searchParams:URLSearchParams = new URLSearchParams(search);
-		var graphicKey:String = [for (i in 0...128) 0].join("");
-		if (searchParams.has("key"))
-			graphicKey = searchParams.get("key");
+		var graphicKey:String = [for (i in 0...KEY_HEX_LENGTH) 0].join("");
+		if (searchParams.has("key")) {
+			graphicKey = sanitizeHexKey(searchParams.get("key"));
+		} else if (searchParams.has("c")) {
+			var decoded = decodeCompactKey(searchParams.get("c"));
+			if (decoded != null) {
+				graphicKey = decoded;
+			}
+		}
 		if (searchParams.has("palette"))
 			Globals.setPalette(searchParams.get("palette"));
 		

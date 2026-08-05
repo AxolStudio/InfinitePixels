@@ -43,3 +43,24 @@ body {
   font-size: small;
 
 }
+
+.code-input-group {
+  .input-group-text {
+    padding: 0.2rem 0.4rem;
+  }
+
+  #sprite-id {
+    min-width: 0;
+    font-size: clamp(0.48rem, 1.3vw, 0.68rem);
+    letter-spacing: -0.01em;
+    padding: 0.2rem 0.35rem;
+    line-height: 1.15;
+  }
+
+  #btnCopyCode,
+  #btnGoCode {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.45rem;
+    line-height: 1.15;
+  }
+}

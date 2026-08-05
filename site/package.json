@@ -4,11 +4,12 @@
   "description": "website portion of infinite pixels",
   "main": "index.html",
   "scripts": {
-    "build": "npm run scss",
+    "build": "hugo --gc --minify",
     "watch:css": "sass --watch assets/scss:.",
     "watch": "npm run watch:css",
     "script": "npm run build && npm run watch",
-    "run": "hugo server -D"
+    "run": "hugo server -D --disableFastRender --baseURL http://localhost:1313/ ",
+    "serve": "hugo server -D --disableFastRender --baseURL http://localhost:1313/"
   },
   "author": "",
   "license": "ISC",

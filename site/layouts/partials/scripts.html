@@ -1,4 +1,34 @@
 <script type="text/javascript">lime.embed("InfiniteEngine", "engine-content", 548, 448, { parameters: {} });</script>
+<script type="text/javascript">
+	(function () {
+		var host = document.getElementById("engine-content");
+		if (!host) {
+			return;
+		}
+
+		function applyRoundedClass() {
+			var canvas = host.querySelector("canvas");
+			if (!canvas) {
+				return false;
+			}
+
+			canvas.classList.add("rounded-4");
+			return true;
+		}
+
+		if (applyRoundedClass()) {
+			return;
+		}
+
+		var observer = new MutationObserver(function () {
+			if (applyRoundedClass()) {
+				observer.disconnect();
+			}
+		});
+
+		observer.observe(host, { childList: true, subtree: true });
+	})();
+</script>
 
 {{ $js := resources.Get "js/script.js" | minify }}
 <script src="{{ $js.RelPermalink }}"></script>
