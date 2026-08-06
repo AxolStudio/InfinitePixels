@@ -1,5 +1,7 @@
 # InfinitePixels
 
+[![Build and Deploy Site](https://github.com/AxolStudio/InfinitePixels/actions/workflows/hugo-build.yaml/badge.svg)](https://github.com/AxolStudio/InfinitePixels/actions/workflows/hugo-build.yaml)
+
 InfinitePixels is an experiment in exhaustive pixel art exploration.
 
 The project goal is to build a browsable library of every possible 1-bit 8x8 sprite.
