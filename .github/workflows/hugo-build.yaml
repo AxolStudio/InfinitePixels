@@ -11,8 +11,6 @@ on:
       - main
     tags-ignore:
       - generated.**
-    paths-ignore:
-      - '.github/**'
     pull_request:
         branches:
             - main
