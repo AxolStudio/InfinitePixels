@@ -1,16 +1,16 @@
 # InfinitePixels
 
-## Codespaces
+InfinitePixels is an experiment in exhaustive pixel art exploration.
 
-This repository now includes a devcontainer that automatically provisions required tooling on first Codespace creation and runs a quick self-heal check on startup.
+The project goal is to build a browsable library of every possible 1-bit 8x8 sprite.
 
-- Installs Hugo Extended 0.164.0
-- Installs Haxe, Neko, and haxelib
-- Installs OpenFL and Lime via haxelib
-- Runs Lime setup (only when needed)
-- Installs npm dependencies in site/ (only when missing)
+## What The Site Does
 
-The setup is defined in:
+- Renders sprites from deterministic coordinate IDs
+- Lets you navigate the space with direct coordinates, random jumps, and step controls
+- Provides notable/example coordinates for quick discovery
 
-- .devcontainer/devcontainer.json
-- .devcontainer/post-create.sh
+## Project Structure
+
+- `infinite-engine/`: Haxe/OpenFL rendering engine
+- `site/`: Hugo website and UI for browsing coordinates
