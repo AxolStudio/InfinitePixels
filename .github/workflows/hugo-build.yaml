@@ -106,4 +106,3 @@ jobs:
           git -C "$DEPLOY_DIR" commit -m "Deploy ${GITHUB_SHA}"
           git -C "$DEPLOY_DIR" remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git -C "$DEPLOY_DIR" push --force origin gh-pages
-*** End Patch
