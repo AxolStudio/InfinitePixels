@@ -13,9 +13,13 @@ on:
       - generated.**
     paths-ignore:
       - '.github/**'
+    pull_request:
+        branches:
+            - main
   workflow_dispatch:
 
-permissions: write-all    
+permissions:
+    contents: read
 
 concurrency:
     group: "pages"
@@ -28,6 +32,8 @@ defaults:
 jobs:
     build: 
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
         env:
             HUGO_VERSION: 0.164.0
         outputs:
@@ -52,10 +58,23 @@ jobs:
                   sudo apt-get update
                   sudo apt-get install haxe -y --quiet
                   mkdir ~/haxelib && haxelib setup ~/haxelib
+            -   name: Cache Haxelib
+                uses: actions/cache@v4
+                with:
+                    path: ~/haxelib
+                    key: ${{ runner.os }}-haxelib-${{ hashFiles('infinite-engine/project.xml') }}
+                    restore-keys: |
+                        ${{ runner.os }}-haxelib-
             -   name: Install OpenFL
-                run: haxelib install openfl --quiet
+                run: |
+                    if ! haxelib list | grep -q '^openfl:'; then
+                        haxelib install openfl --quiet
+                    fi
             -   name: Install Lime
-                run: haxelib install lime --quiet
+                run: |
+                    if ! haxelib list | grep -q '^lime:'; then
+                        haxelib install lime --quiet
+                    fi
             -   name: Setup Lime
                 run: haxelib run lime setup -y
             -   name: build project
@@ -68,6 +87,8 @@ jobs:
                 uses: actions/setup-node@v3
                 with:
                     node-version: 20.10.0
+                    cache: npm
+                    cache-dependency-path: site/package-lock.json
             -   name: Install dependencies
                 run: npm ci
                 working-directory: site
@@ -75,21 +96,28 @@ jobs:
                 env:
                     HUGO_ENVIRONMENT: production
                     HUGO_ENV: production
+                    SITE_BASE_URL: "${{ steps.pages.outputs.base_url }}/"
+                run: npm run build
+                working-directory: .
+            -   name: Verify Pages Artifact
                 run: |
-                    hugo \
-                    --gc \
-                    --minify \
-                    --baseURL "${{ steps.pages.outputs.base_url }}/"
-                working-directory: site
+                    test -f site/public/index.html
+            -   name: Smoke Test Home Markup
+                run: |
+                    grep -q 'id="engine-content"' site/public/index.html
             -   name: Upload Artifact
                 uses: actions/upload-pages-artifact@v2
                 with: 
                     path: ./site/public
     
     deploy:
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         environment: 
             name: github-pages
             url: ${{ steps.deployment.outputs.page_url }}
+        permissions:
+            pages: write
+            id-token: write
         outputs:
             base_url: ${{ needs.build.outputs.base_url }}
         runs-on: ubuntu-latest
