@@ -1,48 +1,102 @@
 {{ define "header" }}
 <h1 class="masthead-brand display-2">Infinite Pixels</h1>
-<p class="lead">Every possible 16x16 pixel 4-bit sprite that can possibly exist</p>
+<p class="lead">Every possible 16x16 pixel 2-color sprite that can possibly exist</p>
 {{ end }}
 
 {{ define "main" }}
 
 <div id="engine-content" class="ratio" style="--bs-aspect-ratio: 80%;"></div>
+
+<div class="d-flex flex-column justify-content-evenly gap-2 py-3">
+    <div class="current-location-row d-flex align-items-center gap-2">
+        <div class="input-group code-input-group flex-grow-1">
+            <span class="input-group-text" id="sprite-id-label" title="Current Location">
+                <i class="bi bi-geo-alt-fill fs-5" style="border:none;"></i>
+            </span>
+            <input type="text" id="sprite-id" class="form-control key-font code-input" value="" aria-describedby="sprite-id-label" title="Current Location" readonly>
+        </div>
+        <button class="btn btn-outline-light btn-sm icon-only-btn" type="button" id="btnCopyCode" title="Copy Coordinates ID" aria-label="Copy Coordinates ID">
+            <i class="bi bi-copy"></i>
+        </button>
+        <button id="btnRand" class="btn btn-primary btn-sm icon-only-btn" title="Random Location" aria-label="Random Location">
+            <i class="bi bi-dice-5-fill"></i>
+        </button>
+        <button class="btn btn-outline-light btn-sm icon-only-btn" type="button" id="btnToggleNav" data-bs-toggle="collapse" data-bs-target="#navigation-panel" aria-expanded="false" aria-controls="navigation-panel" title="Navigation" aria-label="Navigation">
+            <i class="bi bi-sign-turn-right"></i>
+        </button>
+    </div>
+
+    <div class="collapse" id="navigation-panel">
+        <div class="navigation-panel-inner d-flex flex-column gap-2 mt-1">
+            <div>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="input-group code-input-group flex-grow-1">
+                        <span class="input-group-text" id="sprite-id-target-label" title="Destination Coordinate ID">
+                            <i class="bi bi-crosshair2 fs-5" style="border:none;"></i>
+                        </span>
+                        <input type="text" id="sprite-id-target" class="form-control key-font code-input" value="" placeholder="Enter a code..." aria-label="Navigate to code" title="Destination Coordinate ID" aria-describedby="sprite-id-target-label">
+                    </div>
+                    <button class="btn btn-success btn-sm icon-only-btn" type="button" id="btnGoCode" title="Go" aria-label="Go">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 nav-controls">
+                <button id="btnMinus" class="btn btn-primary btn-sm icon-only-btn" title="Step Backward" aria-label="Step Backward">
+                    <i class="bi bi-dash-lg"></i>
+                </button>
+
+                <div class="input-group step-input-group">
+                    <span class="input-group-text" id="adjust-label">Adjust by</span>
+                    <input type="text" id="numAdjust" class="form-control" value="1" aria-describedby="adjust-label">
+                </div>
+
+                <button id="btnPlus" class="btn btn-primary btn-sm icon-only-btn" title="Step Forward" aria-label="Step Forward">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
+            </div>
+
+            <div class="step-builder">
+                <div class="d-flex align-items-center gap-2 flex-nowrap step-builder-row">
+                    <input id="exp-slider" class="form-range flex-grow-1" type="range" min="0" max="30" value="0" aria-label="Exponent slider">
+                    <div class="input-group input-group-sm exp-input-group">
+                        <span class="input-group-text">1e</span>
+                        <input id="exp-value" class="form-control exp-value" type="number" min="0" max="30" step="1" value="0" aria-label="Exponent value">
+                    </div>
+                    <button class="btn btn-outline-light btn-sm icon-only-btn" type="button" id="btnApplyExponent" title="Apply Step" aria-label="Apply Step">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="notable-coords mt-2">
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <i class="bi bi-star-fill"></i>
+            <span class="fw-semibold">Notable Coordinates</span>
+        </div>
+
+        <div class="row row-cols-3 row-cols-md-4 g-2 notable-grid text-start">
+            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AAAAAAwMHh4_P_8__z_-H_wP-AfwA-ABwAAAAAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Heart</a></div>
+            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AADwB_gfmBn4H_AP4AewDfgf_D_MM2AGcA4YGAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Plumber</a></div>
+            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AACAAcAD4AfwD_gf8A_gB8ADgAGAAcADwAPAAwAAAAA"><i class="bi bi-crosshair2 me-1"></i>Tree</a></div>
+            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AAAMMBw4-B_8P85z7nf-f252DnCcOfgf8A_AAwAAAAA"><i class="bi bi-crosshair2 me-1"></i>Cat</a></div>
+
+            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AAAAAMAP8D_8__7__________v_8__A_wA8AAAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Fish</a></div>
+            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=gAHAA8AD4AfgB_AP8A_wD_AP4AfgB7ANmBmMMcADwAM"><i class="bi bi-crosshair2 me-1"></i>Rocket</a></div>
+            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AADwD_gf3DvcO_w__D_4H7ANuB04HPAP4AcAAAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Skull</a></div>
+            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AAAAAQghEBEgCcAH_D_AByAJEBEIIQABAAAAAAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Star</a></div>
+
+            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AABgBvAP-B_cO_w_7DfMM6w1YAZQCkgSRCIAAAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Alien</a></div>
+            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AADwD_gf_D_-f85zznP-f_5_tm0mZLZtAAAAAAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Ghost</a></div>
+            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AADAD_A_-H_8__wD_gH-Af4B_gH8A_z_-H_wP8APAAA"><i class="bi bi-crosshair2 me-1"></i>Moon</a></div>
+            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AADgBzAMMAzgB4ABgAGAAfAPMAPwDwAAAAAAAAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Key</a></div>
+        </div>
+    </section>
+</div>
 {{ end }}
 
 {{ define "footer" }}
-<div class="d-flex flex-column justify-content-evenly " style="height: 200px;">
-    <div class="input-group code-input-group">
-        <span class="input-group-text" id="sprite-id-label">
-            <i class="bi bi-geo-alt input-group-text fs-5" style="border:none;"></i>
-        </span>
-    
-        <input type="text" id="sprite-id" class="form-control key-font code-input" value="" aria-describedby="sprite-id-label">
-        <button class="btn btn-outline-light btn-sm" type="button" id="btnCopyCode">Copy</button>
-        <button class="btn btn-primary btn-sm" type="button" id="btnGoCode">Go</button>
-    </div>
-
-    <div class="d-flex">
-        <button id="btnMinus" class="btn btn-primary btn-sm px-4">-</button>
-        <div class="input-group mx-4">
-            <span class="input-group-text" id="adjust-label">Navigate by</span>
-            <input type="text" id="numAdjust" class="form-control" value="1" aria-describedby="adjust-label">
-        </div>
-        <button id="btnPlus" class="btn btn-primary btn-sm px-4">+</button>
-    </div>
-    <div class="d-flex justify-content-evenly ">
-        <button class="btn btn-dark btn-secondary btn-sm" id="btnV1e1" onclick="setValue(10);">1e1</button>
-        <button class="btn btn-dark btn-secondary btn-sm" id="btnV1e2" onclick="setValue(100);">1e2</button>
-        <button class="btn btn-dark btn-secondary btn-sm" id="btnV1e3" onclick="setValue(1000);">1e3</button>
-        <button class="btn btn-dark btn-secondary btn-sm" id="btnV1e4" onclick="setValue(10000);">1e4</button>
-        <button class="btn btn-dark btn-secondary btn-sm" id="btnV1e5" onclick="setValue(100000);">1e5</button>
-        <button class="btn btn-dark btn-secondary btn-sm" id="btnV1e6" onclick="setValue(1000000);">1e6</button>
-        <button class="btn btn-dark btn-secondary btn-sm" id="btnV1e7" onclick="setValue(10000000);">1e7</button>
-        <button class="btn btn-dark btn-secondary btn-sm" id="btnV1e8" onclick="setValue(100000000);">1e8</button>
-        <button class="btn btn-dark btn-secondary btn-sm" id="btnV1e9" onclick="setValue(1000000000);">1e9</button>
-        <button class="btn btn-dark btn-secondary btn-sm" id="btnV1e10" onclick="setValue(10000000000);">1e10</button>
-
-    </div>
-    <a href="" id="btnRand" class="btn btn-primary btn-sm">Random</a>
-</div>
-
-
 {{ end }}

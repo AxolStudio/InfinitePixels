@@ -9,9 +9,8 @@ import js.html.URLSearchParams;
 import openfl.display.Sprite;
 
 class Main extends Sprite {
-	static inline var KEY_HEX_LENGTH:Int = 128;
-	static inline var KEY_BYTE_LENGTH:Int = 64;
-	static inline var BASE85_ALPHABET:String = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#$%&()*+-;<=>?@^_`{|}~";
+	static inline var KEY_HEX_LENGTH:Int = 64;
+	static inline var KEY_BYTE_LENGTH:Int = 32;
 
 	static function sanitizeHexKey(raw:String):String {
 		var cleaned = ~/[^a-fA-F0-9]/g.replace(raw, "").toLowerCase();
@@ -32,50 +31,7 @@ class Main extends Sprite {
 		return out.toString();
 	}
 
-	static function decodeBase85(compact:String):Null<Bytes> {
-		if (compact == null || compact.length == 0 || compact.length % 5 != 0) {
-			return null;
-		}
-
-		var decoded = Bytes.alloc(Std.int((compact.length / 5) * 4));
-		var outPos = 0;
-
-		for (i in 0...Std.int(compact.length / 5)) {
-			var value:Float = 0;
-			for (j in 0...5) {
-				var ch = compact.charAt((i * 5) + j);
-				var idx = BASE85_ALPHABET.indexOf(ch);
-				if (idx < 0) {
-					return null;
-				}
-				value = (value * 85) + idx;
-			}
-
-			if (value < 0 || value > 4294967295.0) {
-				return null;
-			}
-
-			var b0 = Std.int(Math.floor(value / 16777216.0));
-			var rem1 = value - (b0 * 16777216.0);
-			var b1 = Std.int(Math.floor(rem1 / 65536.0));
-			var rem2 = rem1 - (b1 * 65536.0);
-			var b2 = Std.int(Math.floor(rem2 / 256.0));
-			var b3 = Std.int(rem2 - (b2 * 256.0));
-
-			decoded.set(outPos++, b0);
-			decoded.set(outPos++, b1);
-			decoded.set(outPos++, b2);
-			decoded.set(outPos++, b3);
-		}
-
-		return decoded;
-	}
-
 	static function decodeBase64Url(compact:String):Null<Bytes> {
-		if (compact == null || compact.length == 0) {
-			return null;
-		}
-
 		if (compact == null || compact.length == 0) {
 			return null;
 		}
@@ -97,10 +53,7 @@ class Main extends Sprite {
 			return null;
 		}
 
-		var decoded = decodeBase85(compact);
-		if (decoded == null || decoded.length != KEY_BYTE_LENGTH) {
-			decoded = decodeBase64Url(compact);
-		}
+		var decoded = decodeBase64Url(compact);
 		if (decoded == null || decoded.length != KEY_BYTE_LENGTH) {
 			return null;
 		}

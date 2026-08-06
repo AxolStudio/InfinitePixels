@@ -1,14 +1,10 @@
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    var KEY_HEX_LENGTH = 128;
+    var KEY_HEX_LENGTH = 64;
     var KEY_BYTE_LENGTH = KEY_HEX_LENGTH / 2;
     var MODULUS = BigInt("0x1" + "0".repeat(KEY_HEX_LENGTH));
-    var BASE85_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#$%&()*+-;<=>?@^_`{|}~";
-    var BASE85_CHAR_TO_VALUE = {};
-    for (var i = 0; i < BASE85_ALPHABET.length; i++) {
-        BASE85_CHAR_TO_VALUE[BASE85_ALPHABET.charAt(i)] = i;
-    }
+    var DEFAULT_STEP = 1n;
 
     function sanitizeHexKey(input) {
         var cleaned = (input || "").toLowerCase().replace(/[^a-f0-9]/g, "");
@@ -33,51 +29,6 @@ document.addEventListener('DOMContentLoaded', function () {
             hex += bytes[i].toString(16).padStart(2, "0");
         }
         return sanitizeHexKey(hex);
-    }
-
-    function encodeBase85(bytes) {
-        var out = "";
-        for (var i = 0; i < bytes.length; i += 4) {
-            var value = (bytes[i] * 16777216) + (bytes[i + 1] * 65536) + (bytes[i + 2] * 256) + bytes[i + 3];
-            var block = "";
-            for (var j = 0; j < 5; j++) {
-                block = BASE85_ALPHABET.charAt(value % 85) + block;
-                value = Math.floor(value / 85);
-            }
-            out += block;
-        }
-        return out;
-    }
-
-    function decodeBase85(code) {
-        if (!code || code.length % 5 !== 0) {
-            return null;
-        }
-
-        var bytes = new Uint8Array((code.length / 5) * 4);
-        var offset = 0;
-
-        for (var i = 0; i < code.length; i += 5) {
-            var value = 0;
-            for (var j = 0; j < 5; j++) {
-                var mapped = BASE85_CHAR_TO_VALUE[code.charAt(i + j)];
-                if (mapped === undefined) {
-                    return null;
-                }
-                value = (value * 85) + mapped;
-            }
-
-            if (!Number.isFinite(value) || value < 0 || value > 4294967295) {
-                return null;
-            }
-
-            bytes[offset++] = Math.floor(value / 16777216) & 255;
-            bytes[offset++] = Math.floor(value / 65536) & 255;
-            bytes[offset++] = Math.floor(value / 256) & 255;
-            bytes[offset++] = value & 255;
-        }
-
-        return bytes;
     }
 
     function decodeBase64Url(code) {
@@ -106,7 +57,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function hexToCode(hexKey) {
-        return encodeBase85(hexToBytes(hexKey));
+        var bytes = hexToBytes(hexKey);
+        var binary = "";
+        for (var i = 0; i < bytes.length; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
     }
 
     function codeToHex(code) {
@@ -115,10 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         var trimmed = code.trim();
-        var bytes = decodeBase85(trimmed);
-        if (!bytes || bytes.length !== KEY_BYTE_LENGTH) {
-            bytes = decodeBase64Url(trimmed);
-        }
+        var bytes = decodeBase64Url(trimmed);
         if (!bytes || bytes.length !== KEY_BYTE_LENGTH) {
             return null;
         }
@@ -134,9 +87,52 @@ document.addEventListener('DOMContentLoaded', function () {
         return result;
     }
 
+    function parseStepValue(raw) {
+        if (raw == null) {
+            return null;
+        }
+
+        var value = String(raw).trim().toLowerCase();
+        if (!value) {
+            return null;
+        }
+
+        if (/^\d+$/.test(value)) {
+            var direct = BigInt(value);
+            return direct > 0n ? direct : null;
+        }
+
+        var sci = value.match(/^(\d+)e(\d+)$/);
+        if (sci) {
+            var coeff = BigInt(sci[1]);
+            var exponent = BigInt(sci[2]);
+            if (coeff <= 0n) {
+                return null;
+            }
+            return coeff * (10n ** exponent);
+        }
+
+        return null;
+    }
+
+    function normalizeStepValue(raw, fallback) {
+        var parsed = parseStepValue(raw);
+        return parsed != null ? parsed : fallback;
+    }
+
+    function formatBigInt(value) {
+        var s = value.toString();
+        return s.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
     function navigateToHexKey(hexKey, lastValue) {
         var normalizedHex = sanitizeHexKey(hexKey);
         window.location.href = "?key=" + normalizedHex + "&last=" + encodeURIComponent(lastValue);
+    }
+
+    function setTargetFromHex(hexKey) {
+        targetInput.value = hexToCode(sanitizeHexKey(hexKey));
+        targetInput.classList.remove("is-invalid");
     }
 
     var urlParams = new URLSearchParams(window.location.search);
@@ -152,44 +148,66 @@ document.addEventListener('DOMContentLoaded', function () {
         key = "0".repeat(KEY_HEX_LENGTH);
     }
 
-    var last = parseInt(urlParams.get('last') || "1", 10);
-    if (!Number.isFinite(last) || last <= 0) {
-        last = 1;
-    }
-
-    document.getElementById("numAdjust").value = String(last);
+    var lastStep = normalizeStepValue(urlParams.get('last'), DEFAULT_STEP);
+    document.getElementById("numAdjust").value = lastStep.toString();
 
     var spriteIdInput = document.getElementById('sprite-id');
+    var targetInput = document.getElementById('sprite-id-target');
     spriteIdInput.value = hexToCode(key);
+    targetInput.value = "";
 
-    window.setValue = function (value) {
-        document.getElementById("numAdjust").value = String(value);
+    document.getElementById("btnRand").onclick = function (event) {
+        event.preventDefault();
+        var step = normalizeStepValue(document.getElementById("numAdjust").value, DEFAULT_STEP);
+        document.getElementById("numAdjust").value = step.toString();
+        navigateToHexKey(getRandomHex(), step.toString());
     };
 
-    document.getElementById("btnRand").setAttribute("href", "?key=" + getRandomHex());
-
-    document.getElementById("btnMinus").onclick = function () {
-        var numAdjust = parseInt(document.getElementById("numAdjust").value, 10);
-        if (!Number.isFinite(numAdjust) || numAdjust <= 0) {
-            numAdjust = 1;
+    function getTargetOrCurrentHex() {
+        var raw = targetInput.value.trim();
+        if (!raw) {
+            return key;
         }
 
-        var numKey = BigInt("0x" + key);
-        numKey = (numKey - BigInt(numAdjust) + MODULUS) % MODULUS;
-        key = numKey.toString(16).padStart(KEY_HEX_LENGTH, '0');
-        navigateToHexKey(key, numAdjust);
+        var parsedHex = codeToHex(raw);
+        if (!parsedHex) {
+            var sanitizedHex = raw.toLowerCase().replace(/[^a-f0-9]/g, "");
+            if (sanitizedHex.length > 0) {
+                parsedHex = sanitizeHexKey(sanitizedHex);
+            }
+        }
+
+        return parsedHex;
+    }
+
+    document.getElementById("btnMinus").onclick = function () {
+        var numAdjust = normalizeStepValue(document.getElementById("numAdjust").value, DEFAULT_STEP);
+        document.getElementById("numAdjust").value = numAdjust.toString();
+
+        var baseHex = getTargetOrCurrentHex();
+        if (!baseHex) {
+            targetInput.classList.add("is-invalid");
+            return;
+        }
+
+        var numKey = BigInt("0x" + baseHex);
+        numKey = (numKey - numAdjust + MODULUS) % MODULUS;
+        setTargetFromHex(numKey.toString(16).padStart(KEY_HEX_LENGTH, '0'));
     };
 
     document.getElementById("btnPlus").onclick = function () {
-        var numAdjust = parseInt(document.getElementById("numAdjust").value, 10);
-        if (!Number.isFinite(numAdjust) || numAdjust <= 0) {
-            numAdjust = 1;
+        var numAdjust = normalizeStepValue(document.getElementById("numAdjust").value, DEFAULT_STEP);
+        document.getElementById("numAdjust").value = numAdjust.toString();
+
+        var baseHex = getTargetOrCurrentHex();
+        if (!baseHex) {
+            targetInput.classList.add("is-invalid");
+            return;
         }
 
-        var numKey = BigInt("0x" + key);
-        numKey = (numKey + BigInt(numAdjust)) % MODULUS;
-        key = numKey.toString(16).padStart(KEY_HEX_LENGTH, '0');
-        navigateToHexKey(key, numAdjust);
+        var numKey = BigInt("0x" + baseHex);
+        numKey = (numKey + numAdjust) % MODULUS;
+        setTargetFromHex(numKey.toString(16).padStart(KEY_HEX_LENGTH, '0'));
     };
 
     document.getElementById("btnCopyCode").onclick = async function () {
@@ -204,7 +222,11 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     function goToInputCode() {
-        var inputValue = spriteIdInput.value.trim();
+        var inputValue = targetInput.value.trim();
+        if (!inputValue) {
+            return;
+        }
+
         var parsedHex = codeToHex(inputValue);
 
         if (!parsedHex) {
@@ -215,14 +237,81 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (!parsedHex) {
+            targetInput.classList.add("is-invalid");
             return;
         }
 
-        navigateToHexKey(parsedHex, document.getElementById("numAdjust").value || "1");
+        targetInput.classList.remove("is-invalid");
+        var step = normalizeStepValue(document.getElementById("numAdjust").value, DEFAULT_STEP);
+        document.getElementById("numAdjust").value = step.toString();
+        navigateToHexKey(parsedHex, step.toString());
     }
 
+    var expSlider = document.getElementById("exp-slider");
+    var expValue = document.getElementById("exp-value");
+    var expPreview = document.getElementById("exp-preview");
+    var btnApplyExponent = document.getElementById("btnApplyExponent");
+
+    function clampExponent(raw) {
+        var n = parseInt(String(raw), 10);
+        if (!Number.isFinite(n)) {
+            n = 0;
+        }
+        if (n < 0) {
+            n = 0;
+        }
+        if (n > 30) {
+            n = 30;
+        }
+        return n;
+    }
+
+    function exponentToStep(exp) {
+        return 10n ** BigInt(exp);
+    }
+
+    function syncExponentControls(exp) {
+        var clamped = clampExponent(exp);
+        if (expSlider) {
+            expSlider.value = String(clamped);
+        }
+        if (expValue) {
+            expValue.value = String(clamped);
+        }
+        if (expPreview) {
+            expPreview.textContent = formatBigInt(exponentToStep(clamped));
+        }
+    }
+
+    syncExponentControls(0);
+
+    if (expSlider) {
+        expSlider.addEventListener("input", function () {
+            syncExponentControls(expSlider.value);
+        });
+    }
+
+    if (expValue) {
+        expValue.addEventListener("input", function () {
+            syncExponentControls(expValue.value);
+        });
+    }
+
+    if (btnApplyExponent) {
+        btnApplyExponent.addEventListener("click", function () {
+            var exp = clampExponent(expValue ? expValue.value : (expSlider ? expSlider.value : "0"));
+            var step = exponentToStep(exp);
+            document.getElementById("numAdjust").value = step.toString();
+            syncExponentControls(exp);
+        });
+    }
+
+    targetInput.addEventListener("input", function () {
+        targetInput.classList.remove("is-invalid");
+    });
+
     document.getElementById("btnGoCode").onclick = goToInputCode;
-    spriteIdInput.addEventListener("keydown", function (event) {
+    targetInput.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             event.preventDefault();
             goToInputCode();

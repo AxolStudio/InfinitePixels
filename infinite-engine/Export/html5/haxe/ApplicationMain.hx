@@ -35,7 +35,7 @@ class ApplicationMain
 		ManifestResources.init(config);
 		#end
 
-		app.meta["build"] = "31";
+		app.meta["build"] = "33";
 		app.meta["company"] = "Axol Studio, LLC";
 		app.meta["file"] = "InfiniteEngine";
 		app.meta["name"] = "InfiniteEngine";
