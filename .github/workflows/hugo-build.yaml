@@ -10,51 +10,56 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: site-publish
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 0
+      - name: Checkout repository
+        run: |
+          set -euo pipefail
+          git clone --no-checkout "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$GITHUB_WORKSPACE"
+          cd "$GITHUB_WORKSPACE"
+          git fetch --depth=1 origin "$GITHUB_REF"
+          git checkout --force FETCH_HEAD
+          git submodule update --init --recursive --depth=1
+
+      - name: Install Hugo
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y curl
+          curl -L -o /tmp/hugo.deb https://github.com/gohugoio/hugo/releases/download/v0.164.0/hugo_extended_0.164.0_linux-amd64.deb
+          sudo dpkg -i /tmp/hugo.deb
 
       - name: Install Haxe
         run: |
+          set -euo pipefail
           sudo add-apt-repository ppa:haxe/releases -y
           sudo apt-get update
-          sudo apt-get install haxe -y --quiet
+          sudo apt-get install -y --quiet haxe
 
       - name: Setup Haxelib
         run: |
+          set -euo pipefail
           mkdir -p "$HOME/haxelib"
           haxelib setup "$HOME/haxelib"
 
-      - name: Cache Haxelib
-        uses: actions/cache@v4
-        with:
-          path: $HOME/haxelib
-          key: ${{ runner.os }}-haxelib-${{ hashFiles('infinite-engine/project.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-haxelib-
-
       - name: Install OpenFL
         run: |
+          set -euo pipefail
           if ! haxelib list | grep -q '^openfl:'; then
             haxelib install openfl --quiet
           fi
 
       - name: Install Lime
         run: |
+          set -euo pipefail
           if ! haxelib list | grep -q '^lime:'; then
             haxelib install lime --quiet
           fi
@@ -63,14 +68,13 @@ jobs:
         run: lime build html5 -clean -final
         working-directory: infinite-engine
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.10.0
-          cache: npm
-          cache-dependency-path: site/package-lock.json
+      - name: Install Node.js and npm
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y nodejs npm
 
-      - name: Install dependencies
+      - name: Install site dependencies
         run: npm ci
         working-directory: site
 
@@ -82,20 +86,24 @@ jobs:
         run: test -f public/index.html
         working-directory: site
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./site/public
-
-  deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages branch
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        run: |
+          set -euo pipefail
+          DEPLOY_DIR="$(mktemp -d)"
+          git init "$DEPLOY_DIR"
+          git -C "$DEPLOY_DIR" config user.name "github-actions[bot]"
+          git -C "$DEPLOY_DIR" config user.email "github-actions[bot]@users.noreply.github.com"
+          git -C "$DEPLOY_DIR" checkout --orphan gh-pages
+          git -C "$DEPLOY_DIR" rm -rf . >/dev/null 2>&1 || true
+          cp -a site/public/. "$DEPLOY_DIR"/
+          touch "$DEPLOY_DIR/.nojekyll"
+          git -C "$DEPLOY_DIR" add -A
+          if git -C "$DEPLOY_DIR" diff --cached --quiet; then
+            echo "No Pages changes to deploy."
+            exit 0
+          fi
+          git -C "$DEPLOY_DIR" commit -m "Deploy ${GITHUB_SHA}"
+          git -C "$DEPLOY_DIR" remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git -C "$DEPLOY_DIR" push --force origin gh-pages
 *** End Patch
