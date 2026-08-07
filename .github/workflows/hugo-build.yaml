@@ -67,7 +67,7 @@ jobs:
           fi
 
       - name: Build Haxe project
-        run: lime build html5 -clean -final
+        run: haxelib run lime build html5 -clean -final
         working-directory: infinite-engine
 
       - name: Install Node.js and npm
