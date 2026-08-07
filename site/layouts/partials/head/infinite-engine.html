@@ -1,2 +1,2 @@
-{{ $engine := resources.Get "js/InfiniteEngine.js" }}
-<script src="{{ $engine.RelPermalink }}" ></script>
+{{ $engine := resources.Get "js/InfiniteEngine.js" | fingerprint }}
+<script src="{{ $engine.RelPermalink }}" integrity="{{ $engine.Data.Integrity }}" crossorigin="anonymous"></script>

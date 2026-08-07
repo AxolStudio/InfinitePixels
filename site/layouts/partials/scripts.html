@@ -30,5 +30,5 @@
 	})();
 </script>
 
-{{ $js := resources.Get "js/script.js" | minify }}
-<script src="{{ $js.RelPermalink }}"></script>
+{{ $js := resources.Get "js/script.js" | minify | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" crossorigin="anonymous"></script>
