@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var KEY_BYTE_LENGTH = KEY_HEX_LENGTH / 2;
     var MODULUS = BigInt("0x1" + "0".repeat(KEY_HEX_LENGTH));
     var DEFAULT_STEP = 1n;
+    var POSITION_MAP_SLOTS = 40n;
 
     function sanitizeHexKey(input) {
         var cleaned = (input || "").toLowerCase().replace(/[^a-f0-9]/g, "");
@@ -135,6 +136,60 @@ document.addEventListener('DOMContentLoaded', function () {
         targetInput.classList.remove("is-invalid");
     }
 
+    function getCurrentNotableLink(currentCode) {
+        var notableLinks = document.querySelectorAll(".notable-link");
+        for (var i = 0; i < notableLinks.length; i++) {
+            var href = notableLinks[i].getAttribute("href") || "";
+            var query = href.split("?")[1] || "";
+            var params = new URLSearchParams(query);
+            if (params.get("c") === currentCode) {
+                return notableLinks[i];
+            }
+        }
+        return null;
+    }
+
+    function updateNotableHighlight(currentCode) {
+        var notableLinks = document.querySelectorAll(".notable-link");
+        for (var i = 0; i < notableLinks.length; i++) {
+            notableLinks[i].classList.remove("notable-link-active");
+        }
+
+        var currentNotableLink = getCurrentNotableLink(currentCode);
+        if (currentNotableLink) {
+            currentNotableLink.classList.add("notable-link-active");
+            return true;
+        }
+
+        return false;
+    }
+
+    function renderPositionMap(hexKey, isNotable) {
+        var map = document.getElementById("position-map");
+        if (!map) {
+            return;
+        }
+
+        var normalizedHex = sanitizeHexKey(hexKey);
+        var numericKey = BigInt("0x" + normalizedHex);
+        var activeIndex = Number((numericKey * POSITION_MAP_SLOTS) / MODULUS);
+        var slotMarkup = "";
+
+        for (var i = 0; i < Number(POSITION_MAP_SLOTS); i++) {
+            if (i === activeIndex) {
+                slotMarkup += '<span class="position-map-slot is-active' + (isNotable ? ' is-notable' : '') + '" aria-hidden="true"><i class="bi bi-bullseye"></i></span>';
+            } else {
+                slotMarkup += '<span class="position-map-slot" aria-hidden="true"><i class="bi bi-dot"></i></span>';
+            }
+        }
+
+        var percent = ((activeIndex + 0.5) / Number(POSITION_MAP_SLOTS)) * 100;
+        map.innerHTML = '<span class="position-map-end position-map-start" aria-hidden="true"><i class="bi bi-signpost-fill"></i></span>' +
+            '<span class="position-map-track" aria-hidden="true">' + slotMarkup + '</span>' +
+            '<span class="position-map-end position-map-finish" aria-hidden="true"><i class="bi bi-octagon-fill"></i></span>';
+        map.title = "Approximate position in sprite space: about " + percent.toFixed(0) + "% through";
+    }
+
     var urlParams = new URLSearchParams(window.location.search);
     var key = null;
 
@@ -153,8 +208,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var spriteIdInput = document.getElementById('sprite-id');
     var targetInput = document.getElementById('sprite-id-target');
-    spriteIdInput.value = hexToCode(key);
+    var currentCode = hexToCode(key);
+    spriteIdInput.value = currentCode;
     targetInput.value = "";
+    renderPositionMap(key, updateNotableHighlight(currentCode));
 
     document.getElementById("btnRand").onclick = function (event) {
         event.preventDefault();

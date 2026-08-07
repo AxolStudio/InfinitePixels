@@ -19,6 +19,11 @@ body {
   max-width: 42em;
 }
 
+.card.text-bg-dark {
+  background-color: #212529;
+  border-color: rgba(0, 0, 0, 0.45);
+}
+
 .site-footer {
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   margin-top: 1.25rem;
@@ -33,6 +38,10 @@ body {
 .footer-link:focus {
   color: #fff;
   text-decoration: underline;
+}
+
+.footer-version {
+  color: rgba(255, 255, 255, 0.38);
 }
 
 
@@ -86,6 +95,71 @@ body {
   }
 }
 
+.position-map {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.45rem;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.9rem;
+  line-height: 1;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.position-map-end {
+  color: rgba(255, 255, 255, 0.72);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.position-map-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.72rem;
+}
+
+.position-map-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.28);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.position-map-slot i {
+  line-height: 1;
+}
+
+.position-map-slot.is-active {
+  color: #e9ecef;
+  font-size: 1rem;
+}
+
+.position-map-slot.is-active.is-notable {
+  color: #d4af37;
+}
+
+.engine-card {
+  overflow: hidden;
+}
+
+.engine-card .card-body {
+  padding: 0.85rem;
+}
+
+.engine-card-canvas {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: calc(var(--bs-border-radius) - 2px);
+  overflow: hidden;
+}
+
 .icon-only-btn {
   min-width: 2.35rem;
   width: 2.35rem;
@@ -97,8 +171,10 @@ body {
 }
 
 .navigation-panel-inner {
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-  padding-top: 0.6rem;
+  background-color: #212529;
+  border: 1px solid rgba(0, 0, 0, 0.45);
+  border-radius: var(--bs-border-radius);
+  padding: 0.85rem;
 }
 
 .nav-controls {
@@ -147,4 +223,30 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.notable-link.notable-link-active {
+  background-color: #d4af37;
+  border-color: #d4af37;
+  color: #1f1a0a;
+}
+
+.notable-link.notable-link-active:hover,
+.notable-link.notable-link-active:focus {
+  background-color: #e0bc52;
+  border-color: #e0bc52;
+  color: #1f1a0a;
+}
+
+.notable-card {
+  text-align: left;
+}
+
+.engine-card,
+.notable-card {
+  box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.22) !important;
+}
+
+.notable-card .card-body {
+  padding: 0.85rem;
 }

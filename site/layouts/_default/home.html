@@ -5,94 +5,102 @@
 
 {{ define "main" }}
 
-<div id="engine-content" class="ratio" style="--bs-aspect-ratio: 80%;"></div>
+<section class="card text-bg-dark shadow engine-card text-start">
+    <div class="card-body d-flex flex-column justify-content-evenly gap-2">
+        <div id="engine-content" class="ratio engine-card-canvas" style="--bs-aspect-ratio: 80%;"></div>
 
-<div class="d-flex flex-column justify-content-evenly gap-2 py-3">
-    <div class="current-location-row d-flex align-items-center gap-2">
-        <div class="input-group code-input-group flex-grow-1">
-            <span class="input-group-text" id="sprite-id-label" title="Current Location">
-                <i class="bi bi-geo-alt-fill fs-5" style="border:none;"></i>
-            </span>
-            <input type="text" id="sprite-id" class="form-control key-font code-input" value="" aria-describedby="sprite-id-label" title="Current Location" readonly>
+        <div class="position-map" id="position-map" aria-label="Approximate position in sprite space"></div>
+
+        <div class="current-location-row d-flex align-items-center gap-2">
+            <div class="input-group code-input-group flex-grow-1">
+                <span class="input-group-text" id="sprite-id-label" title="Current Location">
+                    <i class="bi bi-geo-alt-fill fs-5" style="border:none;"></i>
+                </span>
+                <input type="text" id="sprite-id" class="form-control key-font code-input" value="" aria-describedby="sprite-id-label" title="Current Location" readonly>
+            </div>
+            <button class="btn btn-dark btn-sm icon-only-btn" type="button" id="btnCopyCode" title="Copy Coordinates ID" aria-label="Copy Coordinates ID">
+                <i class="bi bi-copy"></i>
+            </button>
+            <button id="btnRand" class="btn btn-success btn-sm icon-only-btn" title="Random Location" aria-label="Random Location">
+                <i class="bi bi-dice-5-fill"></i>
+            </button>
+            <button class="btn btn-dark btn-sm icon-only-btn" type="button" id="btnToggleNav" data-bs-toggle="collapse" data-bs-target="#navigation-panel" aria-expanded="false" aria-controls="navigation-panel" title="Navigation" aria-label="Navigation">
+                <i class="bi bi-sign-turn-right"></i>
+            </button>
         </div>
-        <button class="btn btn-dark btn-sm icon-only-btn" type="button" id="btnCopyCode" title="Copy Coordinates ID" aria-label="Copy Coordinates ID">
-            <i class="bi bi-copy"></i>
-        </button>
-        <button id="btnRand" class="btn btn-success btn-sm icon-only-btn" title="Random Location" aria-label="Random Location">
-            <i class="bi bi-dice-5-fill"></i>
-        </button>
-        <button class="btn btn-dark btn-sm icon-only-btn" type="button" id="btnToggleNav" data-bs-toggle="collapse" data-bs-target="#navigation-panel" aria-expanded="false" aria-controls="navigation-panel" title="Navigation" aria-label="Navigation">
-            <i class="bi bi-sign-turn-right"></i>
-        </button>
-    </div>
 
-    <div class="collapse" id="navigation-panel">
-        <div class="navigation-panel-inner d-flex flex-column gap-2 mt-1">
-            <div>
-                <div class="d-flex align-items-center gap-2">
-                    <div class="input-group code-input-group flex-grow-1">
-                        <span class="input-group-text" id="sprite-id-target-label" title="Destination Coordinate ID">
-                            <i class="bi bi-crosshair2 fs-5" style="border:none;"></i>
-                        </span>
-                        <input type="text" id="sprite-id-target" class="form-control key-font code-input" value="" placeholder="Enter a code..." aria-label="Navigate to code" title="Destination Coordinate ID" aria-describedby="sprite-id-target-label">
+        <div class="collapse" id="navigation-panel">
+            <div class="navigation-panel-inner d-flex flex-column gap-2 mt-1">
+                <div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="input-group code-input-group flex-grow-1">
+                            <span class="input-group-text" id="sprite-id-target-label" title="Destination Coordinate ID">
+                                <i class="bi bi-crosshair2 fs-5" style="border:none;"></i>
+                            </span>
+                            <input type="text" id="sprite-id-target" class="form-control key-font code-input" value="" placeholder="Enter a code..." aria-label="Navigate to code" title="Destination Coordinate ID" aria-describedby="sprite-id-target-label">
+                        </div>
+                        <button class="btn btn-success btn-sm icon-only-btn" type="button" id="btnGoCode" title="Go" aria-label="Go">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                        </button>
                     </div>
-                    <button class="btn btn-success btn-sm icon-only-btn" type="button" id="btnGoCode" title="Go" aria-label="Go">
-                        <i class="bi bi-box-arrow-in-right"></i>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 nav-controls">
+                    <button id="btnMinus" class="btn btn-secondary btn-sm icon-only-btn" title="Step Backward" aria-label="Step Backward">
+                        <i class="bi bi-dash-lg"></i>
+                    </button>
+
+                    <div class="input-group step-input-group">
+                        <span class="input-group-text" id="adjust-label">Adjust by</span>
+                        <input type="text" id="numAdjust" class="form-control" value="1" aria-describedby="adjust-label">
+                    </div>
+
+                    <button id="btnPlus" class="btn btn-secondary btn-sm icon-only-btn" title="Step Forward" aria-label="Step Forward">
+                        <i class="bi bi-plus-lg"></i>
                     </button>
                 </div>
-            </div>
 
-            <div class="d-flex align-items-center gap-2 nav-controls">
-                <button id="btnMinus" class="btn btn-secondary btn-sm icon-only-btn" title="Step Backward" aria-label="Step Backward">
-                    <i class="bi bi-dash-lg"></i>
-                </button>
-
-                <div class="input-group step-input-group">
-                    <span class="input-group-text" id="adjust-label">Adjust by</span>
-                    <input type="text" id="numAdjust" class="form-control" value="1" aria-describedby="adjust-label">
-                </div>
-
-                <button id="btnPlus" class="btn btn-secondary btn-sm icon-only-btn" title="Step Forward" aria-label="Step Forward">
-                    <i class="bi bi-plus-lg"></i>
-                </button>
-            </div>
-
-            <div class="step-builder">
-                <div class="d-flex align-items-center gap-2 flex-nowrap step-builder-row">
-                    <input id="exp-slider" class="form-range flex-grow-1" type="range" min="0" max="30" value="0" aria-label="Exponent slider">
-                    <div class="input-group input-group-sm exp-input-group">
-                        <span class="input-group-text">1e</span>
-                        <input id="exp-value" class="form-control exp-value" type="number" min="0" max="30" step="1" value="0" aria-label="Exponent value">
+                <div class="step-builder">
+                    <div class="d-flex align-items-center gap-2 flex-nowrap step-builder-row">
+                        <input id="exp-slider" class="form-range flex-grow-1" type="range" min="0" max="30" value="0" aria-label="Exponent slider">
+                        <div class="input-group input-group-sm exp-input-group">
+                            <span class="input-group-text">1e</span>
+                            <input id="exp-value" class="form-control exp-value" type="number" min="0" max="30" step="1" value="0" aria-label="Exponent value">
+                        </div>
+                        <button class="btn btn-primary btn-sm icon-only-btn" type="button" id="btnApplyExponent" title="Apply Value" aria-label="Apply Value">
+                            <i class="bi bi-arrow-up-left"></i>
+                        </button>
                     </div>
-                    <button class="btn btn-primary btn-sm icon-only-btn" type="button" id="btnApplyExponent" title="Apply Value" aria-label="Apply Value">
-                        <i class="bi bi-arrow-up-left"></i>
-                    </button>
                 </div>
             </div>
         </div>
     </div>
+</section>
 
-    <section class="notable-coords mt-2">
-        <div class="d-flex align-items-center gap-2 mb-2">
-            <i class="bi bi-star-fill"></i>
-            <span class="fw-semibold">Notable Coordinates</span>
-        </div>
+<div class="py-3">
+    <section class="notable-coords card text-bg-dark shadow notable-card mt-2 text-start">
+        <div class="card-body">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-star-fill"></i>
+                <span class="fw-semibold">Notable Coordinates</span>
+            </div>
 
-        <div class="row row-cols-3 row-cols-md-4 g-2 notable-grid text-start">
-            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AAAAAAwMHh4_P_8__z_-H_wP-AfwA-ABwAAAAAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Heart</a></div>
-            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AADwB_gfmBn4H_AP4AewDfgf_D_MM2AGcA4YGAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Plumber</a></div>
-            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AACAAcAD4AfwD_gf8A_gB8ADgAGAAcADwAPAAwAAAAA"><i class="bi bi-crosshair2 me-1"></i>Tree</a></div>
-            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AAAMMBw4-B_8P85z7nf-f252DnCcOfgf8A_AAwAAAAA"><i class="bi bi-crosshair2 me-1"></i>Cat</a></div>
+            <div class="row row-cols-3 row-cols-md-4 g-2 notable-grid text-start">
+                <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AAAAOABEAIwAloBrcEWOInEiDyHBED8QAxAFCAYG-AE"><i class="bi bi-crosshair2 me-1"></i>Bananas</a></div>
+                <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AAAACgAVACmCQIVAhZB9gAFCATwBEAEQ-REFEgUkAzg"><i class="bi bi-crosshair2 me-1"></i>Cat</a></div>
+                <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AAPAAeBw8DD4OfweZB9mH34ffB_8Hvg54DDgcMAAgAM"><i class="bi bi-crosshair2 me-1"></i>Fish</a></div>
+                <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=4AMYDAQQAiACII1BjUEBQAFAzUAzQwFAAUASJCwawAE"><i class="bi bi-crosshair2 me-1"></i>Ghost</a></div>
 
-            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AAAAAMAP8D_8__7__________v_8__A_wA8AAAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Fish</a></div>
-            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=gAHAA8AD4AfgB_AP8A_wD_AP4AfgB7ANmBmMMcADwAM"><i class="bi bi-crosshair2 me-1"></i>Rocket</a></div>
-            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AADwD_gf3DvcO_w__D_4H7ANuB04HPAP4AcAAAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Skull</a></div>
-            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AAAAAQghEBEgCcAH_D_AByAJEBEIIQABAAAAAAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Star</a></div>
+                <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AAA4Dnwf_j__f_9__3__f_9__j_8H_gP8AfgA8ABAAA"><i class="bi bi-crosshair2 me-1"></i>Heart</a></div>
+                <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AADAA-AHcA4wDDAM8A-AAYABgAGAAYAHgAeAB4ABAAA"><i class="bi bi-crosshair2 me-1"></i>Key</a></div>
+                <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AADgB7gdTDLEI_QvXDpKUgQgZCbIEzAMYAbAAwAAAAA"><i class="bi bi-crosshair2 me-1"></i>Plumber</a></div>
+                <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=8A_8P_5__n_v90fix-Nv9n_-_n-sNQwwXDr4H_AP4Ac"><i class="bi bi-crosshair2 me-1"></i>Skull</a></div>
 
-            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AABgBvAP-B_cO_w_7DfMM6w1YAZQCkgSRCIAAAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Alien</a></div>
-            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AADwD_gf_D_-f85zznP-f_5_tm0mZLZtAAAAAAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Ghost</a></div>
-            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AADAD_A_-H_8__wD_gH-Af4B_gH8A_z_-H_wP8APAAA"><i class="bi bi-crosshair2 me-1"></i>Moon</a></div>
-            <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AADgBzAMMAzgB4ABgAGAAfAPMAPwDwAAAAAAAAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Key</a></div>
+                <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=4AcYGAQgMkx6XnmeeZ4xjAGADbD5n_JP8k_kJxgY4Ac"><i class="bi bi-crosshair2 me-1"></i>Smile</a></div>
+                <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AACAAYABwAPAA_w__D_4H_AP8B_4H3g-PDwcOAAAAAA"><i class="bi bi-crosshair2 me-1"></i>Star</a></div>
+                <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AACAAYABwAPAA-AH4AfgB_AP8A_4H4ABgAHAA8ADAAA"><i class="bi bi-crosshair2 me-1"></i>Tree</a></div>
+                <div class="col"><a class="btn btn-dark btn-sm w-100 notable-link" href="?c=AAAAAMADIATQCNAIEAjoHwQ-An8Cf5w_4AcAAAAAAAA"><i class="bi bi-crosshair2 me-1"></i>UFO</a></div>
+            </div>
         </div>
     </section>
 </div>

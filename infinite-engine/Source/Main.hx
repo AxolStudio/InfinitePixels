@@ -67,7 +67,7 @@ class Main extends Sprite {
 
 	public function new() {
 		super();
-		stage.color = 0x33333333;
+		stage.color = 0x212529;
 
 		stage.quality = LOW;
 
@@ -119,7 +119,7 @@ class Main extends Sprite {
 
 		var scaledSize:Int = Std.int((16 * 25) + 4);
 		var lines:BitmapData = new BitmapData(scaledSize, scaledSize, true, 0x00000000);
-		var lineColor:Int = 0xff7f7f7f;
+		var lineColor:Int = 0xff495057;
 
 		// use openfl.display.bitmapData.fillRect and openfl.geom.Rectangle to draw a 16x16 pixel grid with 2-pixel wide lines
 		for (y in 0...16) {

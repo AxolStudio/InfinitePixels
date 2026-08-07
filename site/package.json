@@ -4,7 +4,7 @@
   "description": "website portion of infinite pixels",
   "main": "index.html",
   "scripts": {
-    "build": "hugo --gc --minify --cleanDestinationDir ${SITE_BASE_URL:+--baseURL \"$SITE_BASE_URL\"}",
+    "build": "HUGO_BUILD_COMMIT=${HUGO_BUILD_COMMIT:-$(git -C .. rev-parse --short HEAD 2>/dev/null || true)} hugo --gc --minify --cleanDestinationDir ${SITE_BASE_URL:+--baseURL \"$SITE_BASE_URL\"}",
     "watch:css": "sass --watch assets/scss:.",
     "watch": "npm run watch:css",
     "script": "npm run build && npm run watch",

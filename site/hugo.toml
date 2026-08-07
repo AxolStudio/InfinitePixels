@@ -5,6 +5,7 @@ title = 'Infinite Pixels'
 enableEmoji = true
 
 [params]
+version = "v0.1.0"
 
 relativeURLs = false
 
