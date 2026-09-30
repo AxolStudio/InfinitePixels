@@ -9,6 +9,13 @@
     <div class="card-body d-flex flex-column justify-content-evenly gap-2">
         <div id="engine-content" class="ratio engine-card-canvas" style="--bs-aspect-ratio: 80%;"></div>
 
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-dark btn-sm d-inline-flex align-items-center gap-2" type="button" id="btnPalette" title="Choose Palette" aria-label="Choose Palette" data-bs-toggle="modal" data-bs-target="#paletteModal">
+                <i class="bi bi-palette2"></i>
+                <span>Choose Palette</span>
+            </button>
+        </div>
+
         <div class="position-map" id="position-map" aria-label="Approximate position in sprite space"></div>
 
         <div class="current-location-row d-flex align-items-center gap-2">
@@ -20,9 +27,6 @@
             </div>
             <button class="btn btn-dark btn-sm icon-only-btn" type="button" id="btnCopyCode" title="Copy Coordinates ID" aria-label="Copy Coordinates ID">
                 <i class="bi bi-copy"></i>
-            </button>
-            <button class="btn btn-dark btn-sm icon-only-btn" type="button" id="btnPalette" title="Choose Palette" aria-label="Choose Palette" data-bs-toggle="modal" data-bs-target="#paletteModal">
-                <i class="bi bi-palette2"></i>
             </button>
             <button id="btnRand" class="btn btn-success btn-sm icon-only-btn" title="Random Location" aria-label="Random Location">
                 <i class="bi bi-dice-5-fill"></i>
