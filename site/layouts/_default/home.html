@@ -21,6 +21,9 @@
             <button class="btn btn-dark btn-sm icon-only-btn" type="button" id="btnCopyCode" title="Copy Coordinates ID" aria-label="Copy Coordinates ID">
                 <i class="bi bi-copy"></i>
             </button>
+            <button class="btn btn-dark btn-sm icon-only-btn" type="button" id="btnPalette" title="Choose Palette" aria-label="Choose Palette" data-bs-toggle="modal" data-bs-target="#paletteModal">
+                <i class="bi bi-palette2"></i>
+            </button>
             <button id="btnRand" class="btn btn-success btn-sm icon-only-btn" title="Random Location" aria-label="Random Location">
                 <i class="bi bi-dice-5-fill"></i>
             </button>
@@ -76,6 +79,78 @@
         </div>
     </div>
 </section>
+
+<div class="modal fade palette-modal" id="paletteModal" tabindex="-1" aria-labelledby="paletteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content text-start">
+            <div class="modal-header">
+                <h2 class="modal-title fs-5" id="paletteModalLabel">Choose Palette</h2>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex flex-column gap-3">
+                <div>
+                    <label class="form-label" for="palette-select">Two-color palette</label>
+                    <select class="form-select" id="palette-select">
+                        <optgroup label="Presets">
+                            <option value="E4DBBA,260D1C">Parchment &amp; Ink</option>
+                            <option value="C9E8DE,176B67">Sea Glass</option>
+                            <option value="FFE1BA,A63F2B">Apricot &amp; Brick</option>
+                            <option value="DCEBF4,24435A">Frost &amp; Navy</option>
+                            <option value="F6D9DC,762E45">Rose &amp; Mulberry</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="palette-preview" id="palette-preview" aria-label="Palette preview">
+                    <span class="palette-preview-swatch" id="palette-preview-background"></span>
+                    <span class="palette-preview-swatch" id="palette-preview-pixels"></span>
+                </div>
+                <div id="palette-status" class="small text-white-50" aria-live="polite"></div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-light btn-sm" id="btnAddPalette">
+                    <i class="bi bi-plus-lg me-1"></i>Add Palette
+                </button>
+                <button type="button" class="btn btn-success btn-sm" id="btnApplyPalette">Apply</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade palette-modal" id="paletteEditorModal" tabindex="-1" aria-labelledby="paletteEditorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content text-start">
+            <div class="modal-header">
+                <h2 class="modal-title fs-5" id="paletteEditorModalLabel">Add Palette</h2>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex flex-column gap-3">
+                <div>
+                    <label class="form-label" for="palette-name">Palette name</label>
+                    <input class="form-control" id="palette-name" type="text" maxlength="32" value="My Palette">
+                </div>
+                <div class="palette-color-fields">
+                    <label class="palette-color-field" for="palette-color-background">
+                        <span>Background</span>
+                        <input class="form-control form-control-color" id="palette-color-background" type="color" value="#E4DBBA" title="Choose background color">
+                    </label>
+                    <label class="palette-color-field" for="palette-color-pixels">
+                        <span>Pixels</span>
+                        <input class="form-control form-control-color" id="palette-color-pixels" type="color" value="#260D1C" title="Choose pixel color">
+                    </label>
+                </div>
+                <div class="palette-preview" aria-label="Custom palette preview">
+                    <span class="palette-preview-swatch" id="palette-editor-background"></span>
+                    <span class="palette-preview-swatch" id="palette-editor-pixels"></span>
+                </div>
+                <div id="palette-editor-status" class="small text-danger" aria-live="polite"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success btn-sm" id="btnSavePalette">Save &amp; Apply</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="py-3">
     <section class="notable-coords card text-bg-dark shadow notable-card mt-2 text-start">
