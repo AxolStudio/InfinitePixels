@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Tag Review | AxolAPI</title>
+    <link rel="stylesheet" href="admin.css">
+    <script src="admin.js" defer></script>
+</head>
+<body>
+    <main class="admin-shell">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">AXOL STUDIO / INFINITE PIXELS</p>
+                <h1>Tag review</h1>
+            </div>
+            <button class="quiet-button hidden" id="lock-button" type="button">Lock session</button>
+        </header>
+
+        <section class="access-panel" id="access-panel" aria-labelledby="access-title">
+            <h2 id="access-title">Admin access</h2>
+            <p>Sign in with your admin username and password to load pending suggestions.</p>
+            <form id="access-form">
+                <label for="admin-username">Username</label>
+                <input id="admin-username" name="username" type="text" autocomplete="username" required>
+                <label for="admin-password">Password</label>
+                <div class="access-controls">
+                    <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
+                    <button class="primary-button" type="submit">Unlock queue</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="queue-section hidden" id="queue-section" aria-labelledby="queue-title">
+            <div class="queue-heading">
+                <div>
+                    <h2 id="queue-title">Pending suggestions</h2>
+                    <p id="queue-summary" aria-live="polite"></p>
+                </div>
+                <button class="quiet-button" id="refresh-button" type="button">Refresh</button>
+            </div>
+            <div class="notice hidden" id="notice" role="status" aria-live="polite"></div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Tag</th>
+                            <th scope="col">Sprite preview</th>
+                            <th scope="col">Submitted</th>
+                            <th scope="col"><span class="visually-hidden">Actions</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="suggestions-body"></tbody>
+                </table>
+            </div>
+            <p class="empty-state hidden" id="empty-state">No pending suggestions.</p>
+        </section>
+    </main>
+    <div class="sprite-preview hidden" id="sprite-preview" role="img" aria-label="Sprite preview">
+        <canvas id="sprite-preview-canvas" width="160" height="160" aria-hidden="true"></canvas>
+    </div>
+</body>
+</html>
